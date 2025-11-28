@@ -1,0 +1,8 @@
+{
+  "name": "VibefIT",
+  "description": "An AI-powered fashion assistant that analyzes your photo and clothing to generate realistic try-on previews, offers styling advice, and provides image editing capabilities.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
