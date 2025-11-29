@@ -1,13 +1,12 @@
 
 import { ImageSize, AspectRatio } from "../types";
 
-const BACKEND_URL = "http://localhost:3001/api"; // Your backend server URL
-
-// Frontend does not directly access GoogleGenAI
-// const getAi = () => new GoogleGenAI({ apiKey: process.env.API_KEY }); // REMOVED
-
-// System prompt is now handled by the backend
-// const SYSTEM_PROMPT = `...`; // REMOVED
+// Automatically detect environment
+// If hostname is localhost, use port 3001 (your local node server)
+// If hostname is anything else (like vercel.app), use relative path /api (Vercel serverless functions)
+const BACKEND_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+  ? 'http://localhost:3001/api' 
+  : '/api';
 
 export const analyzeTryOnRequest = async (userImageBase64: string, clothImageBase64: string) => {
   try {
@@ -20,8 +19,8 @@ export const analyzeTryOnRequest = async (userImageBase64: string, clothImageBas
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to analyze try-on request from backend");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to analyze try-on request (${response.status})`);
     }
 
     const data = await response.json();
@@ -48,8 +47,8 @@ export const generateTryOnImage = async (
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to generate image from backend");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to generate image (${response.status})`);
     }
 
     const data = await response.json();
@@ -75,8 +74,8 @@ export const editImage = async (
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to edit image from backend");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to edit image (${response.status})`);
     }
 
     const data = await response.json();
@@ -103,8 +102,8 @@ export const chatWithBot = async (
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to chat with bot from backend");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to chat with bot (${response.status})`);
     }
 
     const data = await response.json();
@@ -126,8 +125,8 @@ export const transcribeAudio = async (audioBase64: string, mimeType: string) => 
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || "Failed to transcribe audio from backend");
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `Failed to transcribe audio (${response.status})`);
         }
 
         const data = await response.json();
@@ -137,4 +136,3 @@ export const transcribeAudio = async (audioBase64: string, mimeType: string) => 
         throw error;
     }
 }
-    
